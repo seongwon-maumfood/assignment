@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./seongwon.sqlite"
 }
 
 
@@ -16,13 +16,14 @@ model User {
 	username   String
 	encryptedPassword   String
 	posts   Post[]
+	comments Comment[]
 }
 
 model Post {
 	id   Int @id @default(autoincrement())
 	title   String
 	content   String
-	author    User @relation(fields: [id], references: [id])
+	author    User @relation(fields: [authorId], references: [id])
   authorId String
 	comments   Comment[]
 	tags   Tag[]
@@ -30,15 +31,16 @@ model Post {
 
 model Comment {
 	id    Int @id @default(autoincrement())
-	author  User @relation(fields: [id], references: [id])
-	post?   Post @relation(fileds: [id], references: [id])
-  comment?  Comment @relation("TeacherStudents", fields: [id], references: [id])
+	author    User @relation(fields: [authorId], references: [id])
+	authorId String
+	post   Post? @relation(fields: [id], references: [id])
+  comment  Comment? @relation("TeacherStudents", fields: [id], references: [id])
 	content   String
-	comments?  Comment[] @relation("TeacherStudents")
+	comments  Comment[] @relation("TeacherStudents")
 }
 
 model Tag {
 	id  Int @id @default(autoincrement())
 	name  String
-	posts  Post[] @relation(fields: [id], references: [id])
+	posts  Post[]
 }

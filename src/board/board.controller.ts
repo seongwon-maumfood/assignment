@@ -33,7 +33,7 @@ export class BoardController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.boardService.remove(+id);
+  deletePost(@Req() req: Request, @Param('id') id: string) {
+    return this.boardService.deletePost(req['user'],+id);
   }
 }

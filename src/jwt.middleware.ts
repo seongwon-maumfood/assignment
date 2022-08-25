@@ -33,8 +33,8 @@ export class JwtMiddleWare implements NestMiddleware<Request, Response> {
           };
     }
     try {
-      const username = this.jwtService.verify(value, { secret: 'sw123123' });
-      const user = await this.prisma.user.findUnique({ where: { username } });
+      const userid = this.jwtService.verify(value, { secret: 'sw123123' });
+      const user = await this.prisma.user.findUnique({ where: { id:userid } });
       if (!user) {
         return {
             success: false,
@@ -44,6 +44,7 @@ export class JwtMiddleWare implements NestMiddleware<Request, Response> {
           };
       }
       req['user'] = user.id;
+      next();
     } catch (e) {
       console.log(e);
       return {
@@ -53,6 +54,5 @@ export class JwtMiddleWare implements NestMiddleware<Request, Response> {
         message: 'Internal server error.',
       };
     }
-    next();
   }
 }

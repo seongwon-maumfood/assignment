@@ -18,7 +18,7 @@ import { UpdateBoardDto } from './dto/update-post.dto';
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
-  @Post()
+  @Post('/post')
   async create(@Req() req: Request, @Body() createBoardDto:CreatePostDto) {
     return this.boardService.create(req['user'],createBoardDto);
   }

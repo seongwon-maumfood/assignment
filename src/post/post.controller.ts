@@ -10,17 +10,17 @@ import {
   Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { BoardService } from './board.service';
+import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('board')
-export class BoardController {
-  constructor(private readonly boardService: BoardService) {}
+export class PostController {
+  constructor(private readonly postService: PostService) {}
 
   @Post('/post')
   async createPost(@Req() req: Request, @Body() createBoardDto: CreatePostDto) {
-    return this.boardService.createPost(req['user'], createBoardDto);
+    return this.postService.createPost(req['user'], createBoardDto);
   }
 
   @Patch(':id')
@@ -29,11 +29,11 @@ export class BoardController {
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    return this.boardService.updatePost(req['user'], +id, updatePostDto);
+    return this.postService.updatePost(req['user'], +id, updatePostDto);
   }
 
   @Delete(':id')
   deletePost(@Req() req: Request, @Param('id') id: string) {
-    return this.boardService.deletePost(req['user'],+id);
+    return this.postService.deletePost(req['user'],+id);
   }
 }

@@ -8,12 +8,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
-import { BoardModule } from './board/board.module';
+import { PostModule } from './post/post.module';
 import { JwtMiddleWare } from './jwt.middleware';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [UserModule, BoardModule],
+  imports: [UserModule, PostModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, JwtService],
 })

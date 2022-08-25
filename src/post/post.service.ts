@@ -5,7 +5,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
-export class BoardService {
+export class PostService {
   constructor(private prisma: PrismaService) {}
 
   // 게시글 작성

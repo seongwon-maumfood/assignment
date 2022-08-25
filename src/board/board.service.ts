@@ -8,6 +8,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class BoardService {
   constructor(private prisma: PrismaService) {}
 
+  // 게시글 작성
   async createPost(
     authorId: string,
     createPostDto: CreatePostDto,
@@ -59,12 +60,21 @@ export class BoardService {
     return `This action returns a #${id} board`;
   }
 
+  // 게시글 수정
   async updatePost(
     authorId: string,
     id: number,
     updatePostDto: UpdatePostDto,
   ): Promise<Response> {
     const post = await this.prisma.post.findUnique({ where: { id: id } });
+    if (!post) {
+      return {
+        success: false,
+        data: null,
+        code: '404',
+        message: 'Not Found',
+      };
+    }
 
     // 작성자 체크
     if (authorId !== post.authorId) {
@@ -103,14 +113,44 @@ export class BoardService {
     }
 
     return {
-      success:true,
+      success: true,
       data: updatedPost,
       code: '200',
-      message:  '게시글 수정 완료'
-    }
+      message: '게시글 수정 완료',
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} board`;
+  // 게시글 삭제
+  async deletePost(authorId: string, id: number): Promise<Response> {
+    const post = await this.prisma.post.findUnique({ where: { id } });
+    if (!post) {
+      return {
+        success: false,
+        data: null,
+        code: '404',
+        message: 'Not Found',
+      };
+    }
+
+    // 작성자 체크
+    if (authorId !== post.authorId) {
+      return {
+        success: false,
+        data: null,
+        code: '401',
+        message: '작성자만 삭제 할 수 있습니다.',
+      };
+    }
+
+    await this.prisma.postsOnTags.deleteMany({
+      where: { postId: id },
+    });
+    await this.prisma.post.delete({ where: { id } });
+    return {
+      success: true,
+      data: null,
+      code: '200',
+      message: '게시글 삭제 완료',
+    };
   }
 }

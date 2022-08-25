@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserDto } from './dto/user.dto';
 import { Response } from '../interface';
@@ -50,7 +50,7 @@ export class UserService {
         success: false,
         data: null,
         code: '500',
-        message: 'internal server error',
+        message: 'Internal server error',
       };
     }
   }
@@ -84,7 +84,7 @@ export class UserService {
         };
       }
 
-      const token = this.jwt.sign(user.username);
+      const token = this.jwt.sign(user.id);
 
       return {
         success: true,

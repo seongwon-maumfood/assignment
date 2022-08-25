@@ -20,7 +20,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(JwtMiddleWare).forRoutes({
-      path: 'board/*',
+      path: 'post/*',
       method: RequestMethod.ALL,
     });
   }

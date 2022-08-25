@@ -4,5 +4,5 @@ export class CreateUserDto {
   @IsString()
   readonly username: string;
   @IsString()
-  readonly encryptedPassword: string;
+  password: string;
 }

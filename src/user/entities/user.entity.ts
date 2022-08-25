@@ -1,3 +1,5 @@
+import {Post} from '../../interface'
+
 export interface User {
 	id: string;    // uuid 또는 nanoid를 사용합니다.
 	username: string;

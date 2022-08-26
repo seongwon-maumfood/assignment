@@ -1,15 +1,13 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
   Param,
   Delete,
   Req,
-  Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';

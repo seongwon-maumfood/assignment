@@ -51,7 +51,36 @@ export class PostService {
       };
     }
   }
-  
+
+  async getAllPosts(): Promise<Response> {
+    const posts = await this.prisma.post.findMany({});
+    return {
+      success: true,
+      data: posts,
+      code: '200',
+      message: '포스트 목록 조회 완료',
+    };
+  }
+
+  async getPost(id: number): Promise<Response> {
+    const post = await this.prisma.post.findUnique({
+      where: { id },
+      include: {
+        comments: {
+          include: {
+            comments: true,
+          },
+        },
+      },
+    });
+    return {
+      success: true,
+      data: post,
+      code: '200',
+      message: '포스트 상세 조회 완료',
+    };
+  }
+
   // 게시글 수정
   async updatePost(
     authorId: string,

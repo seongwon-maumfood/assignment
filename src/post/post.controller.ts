@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Req,
+  Get,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { PostService } from './post.service';
@@ -16,9 +17,19 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Post('/post')
-  async createPost(@Req() req: Request, @Body() createBoardDto: CreatePostDto) {
+  @Post('/create')
+  createPost(@Req() req: Request, @Body() createBoardDto: CreatePostDto) {
     return this.postService.createPost(req['user'], createBoardDto);
+  }
+
+  @Get()
+  getAllPosts(){
+    return this.postService.getAllPosts()
+  }
+
+  @Get(':id')
+  async getPost(@Param('id') id: string){
+    return this.postService.getPost(+id)
   }
 
   @Patch(':id')

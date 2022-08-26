@@ -22,16 +22,28 @@ export class CommentController {
     @Param('id') id: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
-    return this.commentService.create(req['user'], +id, createCommentDto);
+    return this.commentService.createComment(
+      req['user'],
+      +id,
+      createCommentDto,
+    );
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
+  updateComment(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateCommentDto: UpdateCommentDto,
+  ) {
+    return this.commentService.updateComment(
+      req['user'],
+      +id,
+      updateCommentDto,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  remove(@Req() req: Request, @Param('id') id: string) {
+    return this.commentService.deleteComment(req['user'], +id);
   }
 }

@@ -51,15 +51,7 @@ export class PostService {
       };
     }
   }
-
-  findAll() {
-    return `This action returns all board`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} board`;
-  }
-
+  
   // 게시글 수정
   async updatePost(
     authorId: string,

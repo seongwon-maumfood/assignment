@@ -29,13 +29,15 @@ model Post {
 }
 
 model Comment {
-    id       Int       @id @unique @default(autoincrement())
-    author   User      @relation(fields: [authorId], references: [id])
-    authorId String
-    post     Post?     @relation(fields: [id], references: [id])
-    comment  Comment?  @relation("TeacherStudents", fields: [id], references: [id])
-    content  String
-    comments Comment[] @relation("TeacherStudents")
+    id        Int       @id @unique @default(autoincrement())
+    author    User      @relation(fields: [authorId], references: [id])
+    authorId  String
+    post      Post?     @relation(fields: [postId], references: [id])
+    postId    Int?
+    comment   Comment?  @relation("TeacherStudents", fields: [commentId], references: [id])
+    commentId Int?
+    content   String
+    comments  Comment[] @relation("TeacherStudents")
 }
 
 model Tag {

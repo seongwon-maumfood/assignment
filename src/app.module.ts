@@ -23,7 +23,9 @@ export class AppModule implements NestModule {
     consumer
       .apply(JwtMiddleWare)
       .forRoutes(
-        { path: 'post/*', method: RequestMethod.ALL },
+        { path: 'post/*', method: RequestMethod.POST },
+        { path: 'post/*', method: RequestMethod.PATCH },
+        { path: 'post/*', method: RequestMethod.DELETE },
         { path: 'comment/*', method: RequestMethod.ALL },
       );
   }

@@ -10,13 +10,14 @@ export class CommentService {
 
   async createComment(
     authorId: string,
+    target: string,
     id: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Response> {
     try {
       let comment = {};
 
-      if (createCommentDto.target === 'post') {
+      if (target === 'post') {
         comment = await this.prisma.comment.create({
           data: {
             authorId,
@@ -24,7 +25,7 @@ export class CommentService {
             postId: id,
           },
         });
-      } else if (createCommentDto.target === 'comment') {
+      } else if (target === 'comment') {
         comment = await this.prisma.comment.create({
           data: {
             authorId,

@@ -16,14 +16,16 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Post(':id')
+  @Post(':target/:id')
   create(
     @Req() req: Request,
+    @Param('target') target: string,
     @Param('id') id: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     return this.commentService.createComment(
       req['user'],
+      target,
       +id,
       createCommentDto,
     );

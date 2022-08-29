@@ -15,42 +15,32 @@ export class CommentService {
     id: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Response> {
-    try {
-      let comment = {};
+    let comment = {};
 
-      if (target === 'post') {
-        comment = await this.prisma.comment.create({
-          data: {
-            authorId,
-            content: createCommentDto.content,
-            postId: id,
-          },
-        });
-      } else if (target === 'comment') {
-        comment = await this.prisma.comment.create({
-          data: {
-            authorId,
-            content: createCommentDto.content,
-            commentId: id,
-          },
-        });
-      }
-
-      return {
-        success: true,
-        data: comment,
-        code: '201',
-        message: '댓글 작성 완료',
-      };
-    } catch (e) {
-      console.log(e);
-      return {
-        success: false,
-        data: null,
-        code: '500',
-        message: 'Internal server error',
-      };
+    if (target === 'post') {
+      comment = await this.prisma.comment.create({
+        data: {
+          authorId,
+          content: createCommentDto.content,
+          postId: id,
+        },
+      });
+    } else if (target === 'comment') {
+      comment = await this.prisma.comment.create({
+        data: {
+          authorId,
+          content: createCommentDto.content,
+          commentId: id,
+        },
+      });
     }
+
+    return {
+      success: true,
+      data: comment,
+      code: '201',
+      message: '댓글 작성 완료',
+    };
   }
 
   async updateComment(
@@ -58,56 +48,36 @@ export class CommentService {
     id: number,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Response> {
-    try {
-      if ((await this.authorCheck(authorId, id)) === false)
-        throw new InvalidUserException();
+    if ((await this.authorCheck(authorId, id)) === false)
+      throw new InvalidUserException();
 
-      const comment = await this.prisma.comment.update({
-        where: { id },
-        data: { content: updateCommentDto.content },
-      });
+    const comment = await this.prisma.comment.update({
+      where: { id },
+      data: { content: updateCommentDto.content },
+    });
 
-      if (!comment) throw new NoCommentException();
+    if (!comment) throw new NoCommentException();
 
-      return {
-        success: true,
-        data: comment,
-        code: '200',
-        message: '댓글 수정 완료',
-      };
-    } catch (e) {
-      console.log(e);
-      return {
-        success: false,
-        data: null,
-        code: '500',
-        message: 'Internal server error',
-      };
-    }
+    return {
+      success: true,
+      data: comment,
+      code: '200',
+      message: '댓글 수정 완료',
+    };
   }
 
   async deleteComment(authorId: string, id: number): Promise<Response> {
-    try {
-      if ((await this.authorCheck(authorId, id)) === false)
-        throw new InvalidUserException();
+    if ((await this.authorCheck(authorId, id)) === false)
+      throw new InvalidUserException();
 
-      const comment = await this.prisma.comment.delete({ where: { id } });
-      if (!comment) throw new NoCommentException();
-      return {
-        success: true,
-        data: null,
-        code: '200',
-        message: '댓글 삭제 완료',
-      };
-    } catch (e) {
-      console.log(e);
-      return {
-        success: false,
-        data: null,
-        code: '500',
-        message: 'Internal server error.',
-      };
-    }
+    const comment = await this.prisma.comment.delete({ where: { id } });
+    if (!comment) throw new NoCommentException();
+    return {
+      success: true,
+      data: null,
+      code: '200',
+      message: '댓글 삭제 완료',
+    };
   }
 
   async authorCheck(authorId: string, commentId: number): Promise<boolean> {

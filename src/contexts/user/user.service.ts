@@ -24,62 +24,42 @@ export class UserService {
     const encryptedPassword = await hash(userDto.password, 10);
     userDto.password = encryptedPassword;
 
-    try {
-      await this.prisma.user.create({
-        data: {
-          username: userDto.username,
-          encryptedPassword,
-        },
-      });
+    await this.prisma.user.create({
+      data: {
+        username: userDto.username,
+        encryptedPassword,
+      },
+    });
 
-      return {
-        success: true,
-        data: userDto.username,
-        code: '201',
-        message: '회원가입 완료.',
-      };
-    } catch (e) {
-      console.log(e);
-      return {
-        success: false,
-        data: null,
-        code: '500',
-        message: 'Internal server error',
-      };
-    }
+    return {
+      success: true,
+      data: userDto.username,
+      code: '201',
+      message: '회원가입 완료.',
+    };
   }
 
   async login(userDto: UserDto): Promise<Response> {
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { username: userDto.username },
-      });
+    const user = await this.prisma.user.findUnique({
+      where: { username: userDto.username },
+    });
 
-      if (!user) throw new NoUserException();
+    if (!user) throw new NoUserException();
 
-      const validatePassword = compareSync(
-        userDto.password,
-        user.encryptedPassword,
-      );
+    const validatePassword = compareSync(
+      userDto.password,
+      user.encryptedPassword,
+    );
 
-      if (!validatePassword) throw new NoUserException();
+    if (!validatePassword) throw new NoUserException();
 
-      const token = this.jwt.sign(user.id);
+    const token = this.jwt.sign(user.id);
 
-      return {
-        success: true,
-        data: token,
-        code: '200',
-        message: '로그인 완료.',
-      };
-    } catch (e) {
-      console.log(e);
-      return {
-        success: false,
-        data: null,
-        code: '500',
-        message: 'internal server error',
-      };
-    }
+    return {
+      success: true,
+      data: token,
+      code: '200',
+      message: '로그인 완료.',
+    };
   }
 }

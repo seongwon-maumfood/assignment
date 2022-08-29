@@ -9,7 +9,7 @@ import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './contexts/user/user.module';
 import { PostModule } from './contexts/post/post.module';
-import { JwtMiddleWare } from './jwt.middleware';
+import { JwtMiddleWare } from './middlewares/jwt.middleware';
 import { JwtService } from '@nestjs/jwt';
 import { CommentModule } from './contexts/comment/comment.module';
 

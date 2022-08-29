@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Response } from '../interface';
+import { PrismaService } from '../../prisma/prisma.service';
+import { Response } from '../../interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { InvalidUserException, NoPostException } from './post.exception';
 
 @Injectable()
 export class PostService {
@@ -89,25 +90,10 @@ export class PostService {
   ): Promise<Response> {
     try {
       const post = await this.prisma.post.findUnique({ where: { id: id } });
-      if (!post) {
-        return {
-          success: false,
-          data: null,
-          code: '404',
-          message: 'Not Found',
-        };
-      }
+      if (!post) throw new NoPostException();
 
       // 작성자 체크
-      if (authorId !== post.authorId) {
-        return {
-          success: false,
-          data: null,
-          code: '401',
-          message: '작성자만 수정할 수 있습니다.',
-        };
-      }
-
+      if (authorId !== post.authorId) throw new InvalidUserException();
       const updatedPost = await this.prisma.post.update({
         where: { id: id },
         data: {
@@ -176,24 +162,10 @@ export class PostService {
   async deletePost(authorId: string, id: number): Promise<Response> {
     try {
       const post = await this.prisma.post.findUnique({ where: { id } });
-      if (!post) {
-        return {
-          success: false,
-          data: null,
-          code: '404',
-          message: 'Not Found',
-        };
-      }
+      if (!post) throw new NoPostException();
 
       // 작성자 체크
-      if (authorId !== post.authorId) {
-        return {
-          success: false,
-          data: null,
-          code: '401',
-          message: '작성자만 삭제 할 수 있습니다.',
-        };
-      }
+      if (authorId !== post.authorId) throw new InvalidUserException();
 
       await this.prisma.post.delete({ where: { id } });
       return {

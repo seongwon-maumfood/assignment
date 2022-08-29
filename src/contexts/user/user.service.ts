@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { UserDto } from './dto/user.dto';
-import { Response } from '../interface';
-import { hash, compare, compareSync } from 'bcrypt';
+import { Response } from '../../interface';
+import { hash, compareSync } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { ExistUserException, NoUserException } from './user.exception';
 
 @Injectable()
 export class UserService {
@@ -19,14 +20,7 @@ export class UserService {
       },
     });
 
-    if (isExist) {
-      return {
-        success: false,
-        data: null,
-        code: '400',
-        message: '이미 존재하는 닉네임입니다.',
-      };
-    }
+    if (isExist) throw new ExistUserException();
     const encryptedPassword = await hash(userDto.password, 10);
     userDto.password = encryptedPassword;
 
@@ -61,28 +55,14 @@ export class UserService {
         where: { username: userDto.username },
       });
 
-      if (!user) {
-        return {
-          success: false,
-          data: null,
-          code: '400',
-          message: '해당 유저 정보가 없습니다.',
-        };
-      }
+      if (!user) throw new NoUserException();
 
       const validatePassword = compareSync(
         userDto.password,
         user.encryptedPassword,
       );
 
-      if (!validatePassword) {
-        return {
-          success: false,
-          data: null,
-          code: '400',
-          message: '해당 유저 정보가 없습니다.',
-        };
-      }
+      if (!validatePassword) throw new NoUserException();
 
       const token = this.jwt.sign(user.id);
 

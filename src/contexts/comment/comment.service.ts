@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Response } from '../interface';
+import { PrismaService } from '../../prisma/prisma.service';
+import { Response } from '../../interface';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { InvalidUserException, NoCommentException } from './comment.exception';
 
 @Injectable()
 export class CommentService {
@@ -58,19 +59,15 @@ export class CommentService {
     updateCommentDto: UpdateCommentDto,
   ): Promise<Response> {
     try {
-      if ((await this.authorCheck(authorId, id)) === false) {
-        return {
-          success: false,
-          data: null,
-          code: '401',
-          message: '작성자만 수정할 수 있습니다.',
-        };
-      }
+      if ((await this.authorCheck(authorId, id)) === false)
+        throw new InvalidUserException();
 
       const comment = await this.prisma.comment.update({
         where: { id },
         data: { content: updateCommentDto.content },
       });
+
+      if (!comment) throw new NoCommentException();
 
       return {
         success: true,
@@ -91,17 +88,11 @@ export class CommentService {
 
   async deleteComment(authorId: string, id: number): Promise<Response> {
     try {
-      if ((await this.authorCheck(authorId, id)) === false) {
-        return {
-          success: false,
-          data: null,
-          code: '401',
-          message: '작성자만 삭제할 수 있습니다.',
-        };
-      }
+      if ((await this.authorCheck(authorId, id)) === false)
+        throw new InvalidUserException();
 
-      await this.prisma.comment.delete({ where: { id } });
-
+      const comment = await this.prisma.comment.delete({ where: { id } });
+      if (!comment) throw new NoCommentException();
       return {
         success: true,
         data: null,

@@ -23,13 +23,13 @@ export class PostController {
   }
 
   @Get()
-  getAllPosts(){
-    return this.postService.getAllPosts()
+  getAllPosts() {
+    return this.postService.getAllPosts();
   }
 
   @Get(':id')
-  async getPost(@Param('id') id: string){
-    return this.postService.getPost(+id)
+  async getPost(@Param('id') id: string) {
+    return this.postService.getPost(+id);
   }
 
   @Patch(':id')
@@ -43,6 +43,6 @@ export class PostController {
 
   @Delete(':id')
   deletePost(@Req() req: Request, @Param('id') id: string) {
-    return this.postService.deletePost(req['user'],+id);
+    return this.postService.deletePost(req['user'], +id);
   }
 }

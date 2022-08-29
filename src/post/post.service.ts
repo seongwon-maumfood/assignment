@@ -195,9 +195,6 @@ export class PostService {
         };
       }
 
-      await this.prisma.postsOnTags.deleteMany({
-        where: { postId: id },
-      });
       await this.prisma.post.delete({ where: { id } });
       return {
         success: true,

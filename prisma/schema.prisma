@@ -1,56 +1,53 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = "file:./seongwon.sqlite"
+  provider = "sqlite"
+  url      = "file:./seongwon.sqlite"
 }
 
 model User {
-    id                String    @id @default(uuid())
-    username          String    @unique
-    encryptedPassword String
-    posts             Post[]
-    comments          Comment[]
+  id                String    @id @default(uuid())
+  username          String    @unique
+  encryptedPassword String
+  comments          Comment[]
+  posts             Post[]
 }
 
 model Post {
-    id       Int           @id @default(autoincrement())
-    title    String
-    content  String
-    author   User          @relation(fields: [authorId], references: [id])
-    authorId String
-    comments Comment[]
-    tags     PostsOnTags[]
+  id       Int           @id @default(autoincrement())
+  title    String
+  content  String
+  authorId String
+  author   User          @relation(fields: [authorId], references: [id])
+  comments Comment[]
+  tags     PostsOnTags[]
 }
 
 model Comment {
-    id        Int       @id @default(autoincrement())
-    author    User      @relation(fields: [authorId], references: [id])
-    authorId  String
-    post      Post?     @relation(fields: [postId], references: [id])
-    postId    Int?
-    comment   Comment?  @relation("TeacherStudents", fields: [commentId], references: [id])
-    commentId Int?
-    content   String
-    comments  Comment[] @relation("TeacherStudents")
+  id        Int       @id @default(autoincrement())
+  authorId  String
+  postId    Int?
+  commentId Int?
+  content   String
+  comment   Comment?  @relation("TeacherStudents", fields: [commentId], references: [id])
+  post      Post?     @relation(fields: [postId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[] @relation("TeacherStudents")
 }
 
 model Tag {
-    id    Int           @id @default(autoincrement())
-    name  String        @unique
-    posts PostsOnTags[]
+  id    Int           @id @default(autoincrement())
+  name  String        @unique
+  posts PostsOnTags[]
 }
 
 model PostsOnTags {
-    post   Post @relation(fields: [postId], references: [id])
-    postId Int
-    tag    Tag  @relation(fields: [tagId], references: [id])
-    tagId  Int
+  postId Int
+  tagId  Int
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-    @@id([postId, tagId])
+  @@id([postId, tagId])
 }

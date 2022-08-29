@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Response } from '../../interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InvalidUserException, NoPostException } from './post.exception';
@@ -10,10 +9,7 @@ export class PostService {
   constructor(private prisma: PrismaService) {}
 
   // 게시글 작성
-  async createPost(
-    authorId: string,
-    createPostDto: CreatePostDto,
-  ): Promise<Response> {
+  async createPost(authorId: string, createPostDto: CreatePostDto) {
     const post = await this.prisma.post.create({
       data: {
         title: createPostDto.title,
@@ -35,25 +31,15 @@ export class PostService {
       }
     }
 
-    return {
-      success: true,
-      data: post,
-      code: '201',
-      message: '게시글 작성 완료.',
-    };
+    return post;
   }
 
-  async getAllPosts(): Promise<Response> {
+  async getAllPosts() {
     const posts = await this.prisma.post.findMany({});
-    return {
-      success: true,
-      data: posts,
-      code: '200',
-      message: '포스트 목록 조회 완료',
-    };
+    return posts;
   }
 
-  async getPost(id: number): Promise<Response> {
+  async getPost(id: number) {
     const post = await this.prisma.post.findUnique({
       where: { id },
       include: {
@@ -64,20 +50,11 @@ export class PostService {
         },
       },
     });
-    return {
-      success: true,
-      data: post,
-      code: '200',
-      message: '포스트 상세 조회 완료',
-    };
+    return post;
   }
 
   // 게시글 수정
-  async updatePost(
-    authorId: string,
-    id: number,
-    updatePostDto: UpdatePostDto,
-  ): Promise<Response> {
+  async updatePost(authorId: string, id: number, updatePostDto: UpdatePostDto) {
     const post = await this.prisma.post.findUnique({ where: { id: id } });
     if (!post) throw new NoPostException();
 
@@ -130,16 +107,11 @@ export class PostService {
       });
     }
 
-    return {
-      success: true,
-      data: updatedPost,
-      code: '200',
-      message: '게시글 수정 완료',
-    };
+    return updatedPost;
   }
 
   // 게시글 삭제
-  async deletePost(authorId: string, id: number): Promise<Response> {
+  async deletePost(authorId: string, id: number) {
     const post = await this.prisma.post.findUnique({ where: { id } });
     if (!post) throw new NoPostException();
 
@@ -147,11 +119,6 @@ export class PostService {
     if (authorId !== post.authorId) throw new InvalidUserException();
 
     await this.prisma.post.delete({ where: { id } });
-    return {
-      success: true,
-      data: null,
-      code: '200',
-      message: '게시글 삭제 완료',
-    };
+    return post;
   }
 }

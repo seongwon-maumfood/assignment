@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserDto } from './dto/user.dto';
-import { Response } from '../../interface';
 import { hash, compareSync } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ExistUserException, NoUserException } from './user.exception';
@@ -13,7 +12,7 @@ export class UserService {
     private readonly jwt: JwtService,
   ) {}
 
-  async create(userDto: UserDto): Promise<Response> {
+  async create(userDto: UserDto) {
     const isExist = await this.prisma.user.findUnique({
       where: {
         username: userDto.username,
@@ -31,15 +30,10 @@ export class UserService {
       },
     });
 
-    return {
-      success: true,
-      data: userDto.username,
-      code: '201',
-      message: '회원가입 완료.',
-    };
+    return userDto.username;
   }
 
-  async login(userDto: UserDto): Promise<Response> {
+  async login(userDto: UserDto) {
     const user = await this.prisma.user.findUnique({
       where: { username: userDto.username },
     });
@@ -55,11 +49,6 @@ export class UserService {
 
     const token = this.jwt.sign(user.id);
 
-    return {
-      success: true,
-      data: token,
-      code: '200',
-      message: '로그인 완료.',
-    };
+    return token;
   }
 }

@@ -1,9 +1,9 @@
-import { IsString, Min } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 
 export class CreateCommentDto {
   @IsString()
   target: string;
   @IsString()
-  @Min(1)
+  @Length(1)
   content: string;
 }

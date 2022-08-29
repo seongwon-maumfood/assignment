@@ -22,11 +22,11 @@ export class PostService {
         },
       });
       if (createPostDto.tags.length) {
-        for (let x of createPostDto.tags) {
+        for (const _tag of createPostDto.tags) {
           const tag = await this.prisma.tag.upsert({
-            where: { name: x },
+            where: { name: _tag },
             update: {},
-            create: { name: x },
+            create: { name: _tag },
           });
 
           await this.prisma.postsOnTags.create({
@@ -116,22 +116,43 @@ export class PostService {
         },
       });
 
-      // 해당 포스트의 기존 태그들 삭제
-      await this.prisma.postsOnTags.deleteMany({
-        where: { postId: post.id },
-      });
-
       if (updatePostDto.tags.length) {
-        for (let x of updatePostDto.tags) {
+        const tags = await this.prisma.postsOnTags.findMany({
+          where: { postId: post.id },
+        });
+
+        //  기존에 있었지만 없어지는 태그들
+        if (tags) {
+          for (const tag of tags) {
+            const _tag = await this.prisma.tag.findUnique({
+              where: { id: tag.tagId },
+            });
+            if (!updatePostDto.tags.find((e) => e === _tag.name)) {
+              await this.prisma.postsOnTags.delete({
+                where: { postId_tagId: { postId: post.id, tagId: tag.tagId } },
+              });
+            }
+          }
+        }
+
+        // 기존에 없었지만 생기는 태그들
+        for (const _tag of updatePostDto.tags) {
           const tag = await this.prisma.tag.upsert({
-            where: { name: x },
+            where: { name: _tag },
             update: {},
-            create: { name: x },
+            create: { name: _tag },
           });
-          await this.prisma.postsOnTags.create({
-            data: { postId: post.id, tagId: tag.id },
+          await this.prisma.postsOnTags.upsert({
+            where: { postId_tagId: { postId: post.id, tagId: tag.id } },
+            update: {},
+            create: { postId: post.id, tagId: tag.id },
           });
         }
+      } else {
+        // 태그 입력값이 없을때
+        await this.prisma.postsOnTags.deleteMany({
+          where: { postId: post.id },
+        });
       }
 
       return {

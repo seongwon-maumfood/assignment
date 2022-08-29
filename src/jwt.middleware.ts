@@ -1,7 +1,6 @@
-import { Injectable, NestMiddleware, Options } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { UserController } from './contexts/user/user.controller';
 import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()

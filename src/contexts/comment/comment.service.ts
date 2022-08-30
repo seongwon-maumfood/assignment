@@ -34,7 +34,7 @@ export class CommentService {
       });
     }
 
-    return comment;
+    return { result: comment, message: '댓글 작성 완료' };
   }
 
   async updateComment(
@@ -52,7 +52,7 @@ export class CommentService {
 
     if (!comment) throw new NoCommentException();
 
-    return comment;
+    return { result: comment, message: '댓글 수정 완료' };
   }
 
   async deleteComment(authorId: string, id: number) {
@@ -61,7 +61,7 @@ export class CommentService {
 
     const comment = await this.prisma.comment.delete({ where: { id } });
     if (!comment) throw new NoCommentException();
-    return comment;
+    return { result: comment, message: '댓글 삭제 완료' };
   }
 
   async authorCheck(authorId: string, commentId: number): Promise<boolean> {

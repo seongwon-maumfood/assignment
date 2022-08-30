@@ -31,12 +31,12 @@ export class PostService {
       }
     }
 
-    return post;
+    return { result: post, message: '게시글 작성 완료' };
   }
 
   async getAllPosts() {
     const posts = await this.prisma.post.findMany({});
-    return posts;
+    return { result: posts, message: '게시글 목록 조회 완료' };
   }
 
   async getPost(id: number) {
@@ -50,7 +50,7 @@ export class PostService {
         },
       },
     });
-    return post;
+    return { result: post, message: '게시글 상세 조회 완료' };
   }
 
   // 게시글 수정
@@ -107,7 +107,7 @@ export class PostService {
       });
     }
 
-    return updatedPost;
+    return { result: updatedPost, message: '게시글 수정 완료' };
   }
 
   // 게시글 삭제
@@ -119,6 +119,6 @@ export class PostService {
     if (authorId !== post.authorId) throw new InvalidUserException();
 
     await this.prisma.post.delete({ where: { id } });
-    return post;
+    return { result: post, message: '게시글 삭제 완료' };
   }
 }

@@ -30,7 +30,7 @@ export class UserService {
       },
     });
 
-    return userDto.username;
+    return { result: userDto.username, message: '회원가입 완료' };
   }
 
   async login(userDto: UserDto) {
@@ -49,6 +49,6 @@ export class UserService {
 
     const token = this.jwt.sign(user.id);
 
-    return token;
+    return { result: token, message: '로그인 완료' };
   }
 }
